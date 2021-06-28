@@ -31,14 +31,14 @@ namespace ModSimulatorTests
 
             for ( int iteration = 0; iteration < 1000; iteration++ )
             {
-                int modsToSpawn = 500;
+                int modsToSpawn = 200;
                 foreach ( var strategy in strategies )
                 {
                     var player = new Player();
                     foreach ( SlicingMats mat in (SlicingMats[])Enum.GetValues( typeof( SlicingMats ) ) )
                     {
 
-                        player.Mats.Add( new MatCost( mat, 50 * modsToSpawn ) );
+                        player.Mats.Add( new MatCost( mat, 1 * modsToSpawn ) );
 
                     }
 

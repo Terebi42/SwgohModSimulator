@@ -94,7 +94,9 @@ namespace ModSimulator
                 return; //Don't to 6e+ slicing for now
 
             if (!CanBeSlicedBy(player))
-            { return; }    
+            { 
+                return; 
+            }    
 
             var cost = SlicingCost;
 
