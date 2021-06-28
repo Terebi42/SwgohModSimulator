@@ -32,17 +32,20 @@ namespace ModSimulatorTests
             for ( int iteration = 0; iteration < 1000; iteration++ )
             {
                 int modsToSpawn = 200;
+                int initialMats = 200;
+                int maxCostToSliceMod = 407000;
+
                 foreach ( var strategy in strategies )
                 {
                     var player = new Player();
                     foreach ( SlicingMats mat in (SlicingMats[])Enum.GetValues( typeof( SlicingMats ) ) )
                     {
 
-                        player.Mats.Add( new MatCost( mat, 1 * modsToSpawn ) );
+                        player.Mats.Add( new MatCost( mat, initialMats ) );
 
                     }
 
-                    var startCredits = 407000 * modsToSpawn;
+                    var startCredits = maxCostToSliceMod * modsToSpawn;
                     player.Mats.FirstOrDefault( m => m.Mat == SlicingMats.Credits ).Amount = startCredits;
 
                     for ( int i = 0; i < modsToSpawn; i++ )

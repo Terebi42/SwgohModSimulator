@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using FluentAssertions;
+using System.Linq;
 
 namespace ModSimulator.Tests
 {
@@ -47,6 +48,26 @@ namespace ModSimulator.Tests
                 mod.ExposeAllSecondaries(null);
                 mod.Secondaries.Count.Should().Be( 4 );
             }
+        }
+
+        [TestMethod]
+        public void CostShouldStopSlice()
+        {
+            var player = new Player();
+            foreach ( SlicingMats mat in (SlicingMats[])Enum.GetValues( typeof( SlicingMats ) ) )
+            {
+
+                player.Mats.Add( new MatCost( mat, 1  ) );
+
+            }
+            player.Mats.FirstOrDefault( m => m.Mat == SlicingMats.Credits ).Amount = 1000000;
+
+            var mod = Mod.RollNew();
+            
+            mod.LevelTo( player, 15 );
+            mod.CanBeSlicedBy( player ).Should().BeFalse();
+
+
         }
 
     }
