@@ -14,8 +14,6 @@ namespace ModSimulator
     , Defense, Health, Offense, Protection
     }
 
-    public enum Rarity { E, D, C, B, A }
-
 
     public class Secondary
     {
@@ -31,17 +29,24 @@ namespace ModSimulator
         public Slot Slot { get; set; }
         public Stats Primary { get; set; }
         public List<Secondary> Secondaries { get; set; }=  new List<Secondary>( 4 );
+        public Secondary Speed => Secondaries.FirstOrDefault( s => s.Stat == Stats.Speed );
         public int Level { get; set; }
-        public int Stars { get; set; }
-        public Rarity Rarity { get; set; }
+        public int Rarity { get; set; }
+        public Tier Tier { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Rarity}{Tier}{Level}={Speed.Rolls}";
+        }
 
         public static Mod RollNew()
         {
             var mod = new Mod
             {
                 Slot = (Slot)rnd.Next( 6 ),
-                Stars = 5,
-                Rarity = (Rarity)rnd.Next( 5 ),
+                Rarity = 5,
+                Tier = (Tier)rnd.Next( 5 ),
+                Level = 1
             };
 
             mod.RollPrimary();
@@ -52,7 +57,7 @@ namespace ModSimulator
 
         private void RollInitialSecondaries()
         {
-            int numberOfInitialSecondaries = (int)Rarity;
+            int numberOfInitialSecondaries = (int)Tier;
 
             for ( int i = 0; i < numberOfInitialSecondaries; i++ )
             {
@@ -60,6 +65,73 @@ namespace ModSimulator
             }
 
         }
+
+        public SlicingCost SlicingCost => SlicingCost.CostTable.FirstOrDefault( ct => ct.Rarity == Rarity && ct.Tier == Tier );
+
+
+        public int LevelCost =>  Level <= 14 ? SlicingCost.LevelingCost[Level-1] : 0;
+
+        public bool CanBeSlicedBy(Player player)
+        {
+            foreach (var cost in SlicingCost.Mats)
+            {
+                var playerMat = player.Mats.FirstOrDefault( pm => pm.Mat == cost.Mat );
+                if ( cost.Amount > playerMat.Amount )
+                    return false;
+            }
+            return true;
+        }
+
+        public void Slice(Player player)
+        {
+            if ( Level < 15 )
+                LevelTo( player,15 );
+
+            if ( Tier == Tier.A && Rarity == 6 )
+                return;
+
+            if ( Rarity == 6 )
+                return; //Don't to 6e+ slicing for now
+
+            if (!CanBeSlicedBy(player))
+            { return; }    
+
+            var cost = SlicingCost;
+
+            if ( Tier == Tier.A && Rarity == 5 )
+            {
+                foreach ( var secondary in Secondaries )
+                {
+                    if ( secondary.Rolls < 5 )
+                    {
+                        secondary.Rolls++;
+                        secondary.Amount++; //TODO: Make this add the proper amounts for 6e for each stat
+                    }
+                }
+
+                Tier = Tier.E;
+                Level = 6;
+            }
+            else
+            {
+
+                //Else its a regular slice
+                Tier++;
+                RollSecondary();
+            }
+
+            if ( player != null )
+            {
+                foreach ( var matCost in cost.Mats )
+                {
+                    var playerMat = player.Mats.FirstOrDefault( pm => pm.Mat == matCost.Mat );
+                    playerMat.Amount -= matCost.Amount;
+                }
+            }
+
+
+        }
+            
 
         public Stats RollPrimary()
         {
@@ -125,12 +197,20 @@ namespace ModSimulator
             }
         }
 
-        public void LevelUp()
+        public void LevelUp(Player player)
         {
             if ( Level >= 15 )
                 return;
 
+            if (player !=null && LevelCost<=player.Credits.Amount)
+            {
+                player.Credits.Amount -= LevelCost;
+            }
+
+
             Level++;
+
+
             if ( Level == 3 || Level == 6 || Level == 9 || Level == 12 )
             {
                 if ( Secondaries.Count < 4 )
@@ -144,7 +224,7 @@ namespace ModSimulator
         {
             while ( true )
             {
-                var secondaryToRoll = Secondaries[rnd.Next( 4 )];
+                var secondaryToRoll = Secondaries[rnd.Next( 3 )];
                 if ( secondaryToRoll.Rolls >= 5 )
                     continue;
 
@@ -154,19 +234,20 @@ namespace ModSimulator
 
         }
 
-        public void ExposeAllSecondaries()
+        public void ExposeAllSecondaries(Player player)
         {
             while (Secondaries.Count<4)
             {
-                LevelUp();
+                LevelUp( player);
             }
         }
 
-        public void LevelToMax()
+
+        public void LevelTo( Player player, int target )
         { 
-            while(Level<15)
+            while(Level< target )
             { 
-                LevelUp();
+                LevelUp(player);
             }
         }
 

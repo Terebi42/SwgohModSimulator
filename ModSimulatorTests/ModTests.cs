@@ -33,7 +33,7 @@ namespace ModSimulator.Tests
             for ( int i = 0; i <= 100; i++ )
             {
                 var mod = Mod.RollNew();
-                mod.ExposeAllSecondaries();
+                mod.ExposeAllSecondaries(null);
                 mod.Secondaries.Should().NotContain( s => s.Stat == mod.Primary );
             }
         }
@@ -44,7 +44,7 @@ namespace ModSimulator.Tests
             for ( int i = 0; i <= 100; i++ )
             {
                 var mod = Mod.RollNew();
-                mod.ExposeAllSecondaries();
+                mod.ExposeAllSecondaries(null);
                 mod.Secondaries.Count.Should().Be( 4 );
             }
         }
