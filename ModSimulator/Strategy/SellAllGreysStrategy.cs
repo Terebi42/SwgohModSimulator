@@ -19,7 +19,7 @@ namespace ModSimulator.Strategy
             }
         }
 
-        public Mod Slice( Player player )
+        public Mod ChooseModToSlice( Player player )
         {
             var workingSet = player.Mods.ToArray().ToList();
             
@@ -34,7 +34,7 @@ namespace ModSimulator.Strategy
             if ( mod == null )
                 return null;
 
-            mod.Slice( player );
+           // mod.Slice( player );
             return mod;
 
 

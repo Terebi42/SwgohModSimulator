@@ -6,12 +6,12 @@ namespace ModSimulator.Strategy
 {
     public interface IModFarmingStrategy
     {
-        Mod Slice( Player player );
+        Mod ChooseModToSlice( Player player );
         void Expose( Player player );
     }
     public abstract class BaseModFarmingStrategy : IModFarmingStrategy
     {
         public abstract void Expose( Player player );
-        public abstract Mod Slice( Player player );
+        public abstract Mod ChooseModToSlice( Player player );
     }
 }

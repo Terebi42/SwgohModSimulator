@@ -5,36 +5,35 @@ using System.Linq;
 
 namespace ModSimulator.Strategy
 {
-    public class BySpeedRollsThenTierDescendingStrategy : IModFarmingStrategy
+    public class ByTierAscendingStrategy : IModFarmingStrategy
     {
         public void Expose( Player player )
         {
             foreach (var mod in player.Mods)
             {
                 mod.ExposeAllSecondaries( player );
-                if (mod.Speed!=null)
+                if ( mod.Speed != null )
                 {
                     mod.LevelTo( player, 12 );
                 }
-                
             }
         }
 
-        public Mod Slice( Player player )
+        public Mod ChooseModToSlice( Player player )
         {
             var workingSet = player.Mods.ToArray().ToList();
             
             workingSet.RemoveAll( m => !m.CanBeSlicedBy( player ) );
             workingSet.RemoveAll( m => m.Speed == null );
-            workingSet.RemoveAll( m => m.Speed.Rolls < (int)m.Tier+1 ); //Green < 2 rolls, Blue < 3, etc
+            workingSet.RemoveAll( m => m.Speed.Rolls < (int)m.Tier +1 ); //Green < 2 rolls, Blue < 3, etc
 
             workingSet.RemoveAll( m => m.Speed.Rolls >=5 ); //dont roll past 5 speed rolls
-            var mod = workingSet.OrderByDescending(m=>m.Speed.Rolls).ThenByDescending( m => m.Tier ).FirstOrDefault();
+            var mod = workingSet.OrderBy( m => m.Tier ).FirstOrDefault();
 
             if ( mod == null )
                 return null;
 
-            mod.Slice( player );
+            //mod.Slice( player );
             return mod;
 
 

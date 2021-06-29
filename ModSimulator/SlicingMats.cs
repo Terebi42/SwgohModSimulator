@@ -22,6 +22,11 @@ namespace ModSimulator
         public SlicingMats Mat { get; set; }
         public long Amount { get; set; }
 
+        public override string ToString()
+        {
+            return $"{Amount} {Mat}";
+        }
+
     }
 
     public class SlicingCost

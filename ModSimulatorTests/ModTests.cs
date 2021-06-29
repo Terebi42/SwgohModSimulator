@@ -42,7 +42,7 @@ namespace ModSimulator.Tests
         [TestMethod]
         public void ExposeAllShouldAlwaysHave4Secondaries()
         {
-            for ( int i = 0; i <= 100; i++ )
+            for ( int i = 0; i <= 1000; i++ )
             {
                 var mod = Mod.RollNew();
                 mod.ExposeAllSecondaries(null);
