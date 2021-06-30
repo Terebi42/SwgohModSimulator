@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace ModSimulator.Strategy
 {
-    public class BySpeedRollsThenTierAscendingStrategy : BaseModFarmingStrategy, IModFarmingStrategy
+    public class ByTierAscendingStrategy : BaseModFarmingStrategy, IModFarmingStrategy
     {
-        public BySpeedRollsThenTierAscendingStrategy( int allowedMisses ) : base( allowedMisses )
+        public ByTierAscendingStrategy( int allowedMisses ) : base( allowedMisses )
         {
         }
 
@@ -15,13 +15,13 @@ namespace ModSimulator.Strategy
         {
             var workingSet = FilterMods( player );
 
-            var mod = workingSet.OrderByDescending(m=>m.Speed.Rolls).ThenBy( m => m.Tier ).FirstOrDefault();
+            var mod = workingSet.OrderBy( m => m.Tier ).FirstOrDefault();
 
             if ( mod == null )
                 return null;
-           
-            return mod;
 
+            //mod.Slice( player );
+            return mod;
         }
     }
 }

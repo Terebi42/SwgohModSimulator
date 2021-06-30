@@ -38,10 +38,11 @@ namespace ModSimulator
         public int Level { get; set; }
         public int Rarity { get; set; }
         public Tier Tier { get; set; }
+        public int Slices { get; set; }
 
         public override string ToString()
         {
-            return $"{Rarity}{Tier}{Level}={Speed.Rolls}";
+            return $"{Rarity}{Tier}{Level} {Slot} {Primary} Speed({Speed.Rolls}) Slices={Slices}";
         }
 
         public static Mod RollNew()
@@ -50,14 +51,34 @@ namespace ModSimulator
             {
                 Slot = (Slot)rnd.Next( 6 ),
                 Rarity = 5,
-                Tier = (Tier)rnd.Next( 5 ),
+                
                 Level = 1
             };
-
+            mod.RollTier();
             mod.RollPrimary();
             mod.RollInitialSecondaries();
 
             return mod;
+        }
+
+        private void RollTier()
+        {
+           // Tier = (Tier)rnd.Next( 5 );
+
+            var chance = rnd.Next( 1000 );
+
+            if ( chance < 639 )
+                Tier = Tier.E;
+            else if ( chance < 836 )
+                Tier = Tier.D;
+            else if ( chance < 941 )
+                Tier = Tier.C;
+            else if ( chance < 978 )
+                Tier = Tier.B;
+            else
+                Tier = Tier.A;
+
+
         }
 
         private void RollInitialSecondaries()
@@ -120,13 +141,15 @@ namespace ModSimulator
 
                 Tier = Tier.E;
                 Rarity = 6;
+                Slices++;
             }
             else
             {
 
                 //Else its a regular slice
                 Tier = (Tier)( Tier + 1 );
-                RollSecondary();
+                RollToIncreaseSecondary();
+                Slices++;
             }
 
             if ( player != null )
@@ -225,22 +248,18 @@ namespace ModSimulator
                 if ( Secondaries.Count < 4 )
                     RollNewSecondary();
                 else
-                    RollSecondary();
+                    RollToIncreaseSecondary();
             }
         }
 
-        private void RollSecondary()
+        private void RollToIncreaseSecondary()
         {
             while ( true )
             {
                 var secondaryToRoll = Secondaries[rnd.Next( 4 )];
                 if ( secondaryToRoll.Rolls >= 5 )
                     continue;
-                var yay = false;
-                if (secondaryToRoll.Stat==Stats.Speed && secondaryToRoll.Rolls==4)
-                {
-                    yay = true;
-                }
+  
                 secondaryToRoll.Rolls++;
                 return;
             }

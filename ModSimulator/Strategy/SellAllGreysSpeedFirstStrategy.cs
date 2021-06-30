@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace ModSimulator.Strategy
 {
-    public class SellAllGreysStrategy : BaseModFarmingStrategy, IModFarmingStrategy
+    public class SellAllGreysSpeedFirstStrategy : BaseModFarmingStrategy, IModFarmingStrategy
     {
-        public SellAllGreysStrategy( int allowedMisses ) : base( allowedMisses )
+        public SellAllGreysSpeedFirstStrategy( int allowedMisses ) : base( allowedMisses )
         {
         }
 
@@ -34,7 +34,7 @@ namespace ModSimulator.Strategy
         {
             var workingSet = FilterMods( player );
 
-            var mod = workingSet.OrderBy( m => m.Tier ).FirstOrDefault();
+            var mod = workingSet.OrderByDescending( m => m.Speed.Rolls ).ThenBy( m => m.Tier ).FirstOrDefault();
 
             if ( mod == null )
                 return null;

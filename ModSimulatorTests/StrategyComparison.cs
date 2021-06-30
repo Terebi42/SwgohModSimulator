@@ -32,25 +32,35 @@ namespace ModSimulatorTests
         public void CompareStrategies()
         {
             var strategies = new List<IModFarmingStrategy>() {
-                new ByTierAscendingStrategy(),
+                new ByTierAscendingStrategy(0),
                 new BySpeedRollsThenTierAscendingStrategy(0),
                 new BySpeedRollsThenTierAscendingStrategy(1),
                 new BySpeedRollsThenTierAscendingStrategy(2),
-                new SellAllGreysStrategy(),
+                new SellAllGreysStrategy(0),
+                new SellAllGreysSpeedFirstStrategy(0),
+                new SellAllGreysSpeedFirstStrategy(1),
+
                 };
 
             var results = new List<Result>();
 
-            int totalPlayers = 2000;
+            int totalPlayers = 200;
 
             foreach ( var strategy in strategies )
             {
-                var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 12 };
-                Parallel.For( 0, totalPlayers, parallelOptions, ( i, state) => { RunPlayer( results, strategy ); } );
-                for ( int playerIteration = 0; playerIteration < totalPlayers; playerIteration++ )
-                {
-                    RunPlayer( results, strategy );
+                bool runParallel = true;
 
+                if ( runParallel )
+                {
+                    var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 12 };
+                    Parallel.For( 0, totalPlayers, parallelOptions, ( i, state ) => { RunPlayer( results, strategy ); } );
+                }
+                else
+                {
+                    for ( int playerIteration = 0; playerIteration < totalPlayers; playerIteration++ )
+                    {
+                        RunPlayer( results, strategy );
+                    }
                 }
             }
 
@@ -71,7 +81,7 @@ namespace ModSimulatorTests
 
         private void RunPlayer( List<Result> results, IModFarmingStrategy strategy )
         {
-            int cyclesPerPlayer = 40;
+            int cyclesPerPlayer = 200;
             int modsToSpawn = 100;
             int initialMats = 200;
             int maxCostToSliceMod = 407000;
