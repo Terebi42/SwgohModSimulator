@@ -42,5 +42,11 @@ namespace ModSimulator.Strategy
            // mod.Slice( player );
             return mod;
         }
+
+        public override void TrashMods( Player player )
+        {
+            base.TrashMods( player );
+            player.Mods.RemoveAll( m => m.Tier == Tier.E );
+        }
     }
 }

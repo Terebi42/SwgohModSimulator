@@ -13,5 +13,7 @@ namespace ModSimulator
 
         public MatCost Credits => Mats.FirstOrDefault( m => m.Mat == SlicingMats.Credits );
 
+        public int Energy { get; set; }
+
     }
 }

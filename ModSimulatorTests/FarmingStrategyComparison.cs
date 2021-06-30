@@ -11,18 +11,28 @@ using System.Threading;
 
 namespace ModSimulatorTests
 {
-   
-
+ 
 
     [TestClass]
-    public class StrategyComparison : StrategyComparisonBase
+    public class FarmingStrategyComparison : StrategyComparisonBase
     {
+        public int EnergyCostPerMod = 16;
+        public int EnergyCostPerMat = 12;
+        public int inventory = 500;
 
-        public override  void RunPlayer( List<Result> results, IModFarmingStrategy strategy )
+        public int dailyModEnergy = 240 + ( 120 * 3 ) + 45;
+        public int FreeModsPerWeek = 10;
+        public int FreeMatsPerWeek = 10; //each
+        public int FreeCreditsPerWeek = 4000000; //raids etc
+        public int FreeCreditsPerDay = 600000; //GW
+
+    
+
+        public  override void RunPlayer( List<Result> results, IModFarmingStrategy strategy )
         {
-            int cyclesPerPlayer = 200;
-            int modsToSpawn = 100;
-            int initialMats = 200;
+            int cyclesPerPlayer = 7*4*6; //7 days * 4 weeks * 6 months
+            //int modsToSpawn = 100;
+            //int initialMats = 200;
             int maxCostToSliceMod = 407000;
             var startCredits = 10000000;//maxCostToSliceMod * modsToSpawn;
 
@@ -32,6 +42,22 @@ namespace ModSimulatorTests
 
             for ( int playerCycle = 0; playerCycle < cyclesPerPlayer; playerCycle++ )
             {
+                if (playerCycle%7 ==0)
+                {
+                    GiveMats( FreeMatsPerWeek, FreeCreditsPerWeek, player );
+                    GiveMods( FreeModsPerWeek, player );
+
+                }
+
+                player.Energy += dailyModEnergy;
+                GiveMats( 0, FreeCreditsPerDay, player );
+
+                while ( player.Energy > EnergyCostPerMod )
+                {
+                    var filtered = strategy.FilterMods( player, false );
+                }
+
+
                 GiveMats( initialMats, startCredits, player );
 
                 GiveMods( modsToSpawn, player );
@@ -84,5 +110,7 @@ namespace ModSimulatorTests
                 result.ModCount += player.Mods.Count();
             }
         }
+
+  
     }
 }

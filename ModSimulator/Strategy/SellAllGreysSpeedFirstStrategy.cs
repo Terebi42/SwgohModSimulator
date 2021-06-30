@@ -23,9 +23,9 @@ namespace ModSimulator.Strategy
             }
         }
 
-        public override List<Mod> FilterMods( Player player )
+        public override List<Mod> FilterMods( Player player, bool includeMats = true )
         {
-            var workingSet =  base.FilterMods( player );
+            var workingSet =  base.FilterMods( player, includeMats );
             workingSet.RemoveAll( m => m.Tier == Tier.E );
             return workingSet;
         }

@@ -9,7 +9,9 @@ namespace ModSimulator.Strategy
     {
         Mod ChooseModToSlice( Player player );
         void Expose( Player player );
-        List<Mod> FilterMods( Player player );
+        List<Mod> FilterMods( Player player, bool includeMats = true );
+
+        void TrashMods( Player player );
     }
     public abstract class BaseModFarmingStrategy : IModFarmingStrategy
     {
@@ -34,7 +36,7 @@ namespace ModSimulator.Strategy
 
         public abstract Mod ChooseModToSlice( Player player );
 
-        public virtual List<Mod> FilterMods( Player player )
+        public virtual List<Mod> FilterMods( Player player, bool includeMats = true )
         {
             var workingSet = player.Mods.ToArray().ToList();
 
@@ -42,7 +44,11 @@ namespace ModSimulator.Strategy
             workingSet.RemoveAll( m => m.Secondaries.Count == 4 && m.Speed == null );
             workingSet.RemoveAll( m => m.Secondaries.Count == 4 && m.Speed.Rolls + AllowedMisses < (int)m.Tier ); //Green < 1 rolls, Blue < 2, etc
             workingSet.RemoveAll( m => m.Speed?.Rolls >= 5 ); //dont roll past 5 speed rolls
-            workingSet.RemoveAll( m => !m.CanBeSlicedBy( player ) ); //Do this one later because it calculates on every mod
+
+            if ( includeMats )
+            {
+                workingSet.RemoveAll( m => !m.CanBeSlicedBy( player ) ); //Do this one later because it calculates on every mod
+            }
 
             return workingSet;
         }
@@ -50,6 +56,11 @@ namespace ModSimulator.Strategy
         public override string ToString()
         {
             return $"{base.ToString()} Allowed Misses = {AllowedMisses}";
+        }
+
+        public virtual void TrashMods( Player player )
+        {
+            player.Mods.RemoveAll( m => m.Secondaries.Count == 4 && m.Speed == null );
         }
     }
 }
