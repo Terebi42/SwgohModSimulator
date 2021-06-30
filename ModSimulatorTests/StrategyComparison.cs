@@ -35,16 +35,14 @@ namespace ModSimulatorTests
                 new ByTierAscendingStrategy(0),
                 new BySpeedRollsThenTierAscendingStrategy(0),
                 new BySpeedRollsThenTierAscendingStrategy(1),
-                new BySpeedRollsThenTierAscendingStrategy(2),
                 new SellAllGreysStrategy(0),
                 new SellAllGreysSpeedFirstStrategy(0),
                 new SellAllGreysSpeedFirstStrategy(1),
-
                 };
 
             var results = new List<Result>();
 
-            int totalPlayers = 200;
+            int totalPlayers = 1000;
 
             foreach ( var strategy in strategies )
             {

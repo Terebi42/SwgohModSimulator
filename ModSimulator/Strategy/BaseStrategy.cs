@@ -38,12 +38,11 @@ namespace ModSimulator.Strategy
         {
             var workingSet = player.Mods.ToArray().ToList();
 
-            workingSet.RemoveAll( m => m.Speed == null );
-            workingSet.RemoveAll( m => m.Speed.Rolls >= 5 ); //dont roll past 5 speed rolls
-
-            workingSet.RemoveAll( m => !m.CanBeSlicedBy( player ) ); //Do this one later because it touches every mod
-
-            workingSet.RemoveAll( m => m.Speed.Rolls + AllowedMisses < (int)m.Tier ); //Green < 1 rolls, Blue < 2, etc
+            
+            workingSet.RemoveAll( m => m.Secondaries.Count == 4 && m.Speed == null );
+            workingSet.RemoveAll( m => m.Secondaries.Count == 4 && m.Speed.Rolls + AllowedMisses < (int)m.Tier ); //Green < 1 rolls, Blue < 2, etc
+            workingSet.RemoveAll( m => m.Speed?.Rolls >= 5 ); //dont roll past 5 speed rolls
+            workingSet.RemoveAll( m => !m.CanBeSlicedBy( player ) ); //Do this one later because it calculates on every mod
 
             return workingSet;
         }
